@@ -1,0 +1,38 @@
+async (page) => {
+  const failures = [], requests = [];
+  page.on('pageerror', error => failures.push(error.message));
+  page.on('request', request => requests.push(request.url()));
+  page.on('dialog', async dialog => { failures.push('Unexpected dialog: ' + dialog.message()); await dialog.dismiss(); });
+  await page.reload();
+  await page.getByRole('textbox', {name:'搜索文件名或正文'}).fill('alpha budget');
+  await page.getByRole('button', {name:'搜索文档',exact:true}).click();
+  await page.getByText('找到 1 份文档',{exact:true}).waitFor();
+  if(await page.locator('.result').count()!==1)throw new Error('AND search failed');
+  const pdfLink=await page.locator('.result .open-link').getAttribute('href');
+  if(!pdfLink.endsWith('#page=2'))throw new Error('PDF physical page number failed');
+  await page.getByRole('button',{name:'PDF',exact:true}).click();
+  await page.getByText('找到 1 份文档',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'TXT',exact:true}).click();
+  await page.getByText('找到 0 份文档',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'全部文档',exact:true}).click();
+  await page.getByRole('textbox',{name:'搜索文件名或正文'}).fill('<script>');
+  await page.getByRole('button',{name:'搜索文档',exact:true}).click();
+  await page.getByText('找到 1 份文档',{exact:true}).waitFor();
+  if(await page.locator('.result script').count()!==0)throw new Error('Document HTML was executed');
+  if(!(await page.locator('.result').innerText()).includes('<script>'))throw new Error('Literal source context lost');
+  await page.getByRole('textbox',{name:'搜索文件名或正文'}).fill('alpha');
+  await page.getByRole('button',{name:'搜索文档',exact:true}).click();
+  await page.getByText('找到 4 份文档',{exact:true}).waitFor();
+  await page.locator('#issues-panel > summary').click();
+  await page.locator('#issues li').filter({hasText:'第 1 页无可提取文字，可能是扫描页或空白页；第一版不提供 OCR'}).waitFor();
+  await page.setViewportSize({width:390,height:844});
+  const fits = await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth);
+  if(!fits)throw new Error('Horizontal overflow on mobile viewport');
+  await page.screenshot({path:'output/playwright/search-mobile.png',fullPage:true});
+  await page.setViewportSize({width:1440,height:1100});
+  await page.screenshot({path:'output/playwright/search-desktop.png',fullPage:true});
+  const external = requests.filter(url=>/^https?:/.test(url)&&!url.startsWith('http://127.0.0.1:8766/'));
+  if(external.length)throw new Error('Unexpected external network: '+external.join(','));
+  if(failures.length)throw new Error(failures.join('\n'));
+  console.log(JSON.stringify({ok:true,checks:['multiword AND','type filters','PDF page 2','literal context and XSS','scanned-page warning','390px layout','local-only requests'],networkRequests:requests.length}));
+}

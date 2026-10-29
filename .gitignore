@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.data/
+.data-*/
+output/
+.playwright-cli/
+*.sqlite3*
+build/
+dist/
+releases/
+*.spec

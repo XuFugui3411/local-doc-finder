@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="local-token" content="__SESSION_TOKEN__">
+  <title>Local Doc Finder · 本地文档检索台</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="/" aria-label="文档检索台主页"><span class="brand-icon">⌕</span><span>LOCAL DOC<br><b>FINDER</b></span></a>
+  <p class="brand-caption">让散落的资料，重新可寻。</p>
+  <div class="nav-label">你的工作台</div><div class="nav-current"><span>▤</span> 文档检索</div>
+  <div class="sidebar-steps"><p>从这里开始</p><div><i>01</i><span>选择资料目录<small>支持递归扫描子目录</small></span></div><div><i>02</i><span>建立或更新索引<small>新增、修改、删除同步处理</small></span></div><div><i>03</i><span>输入记得的关键词<small>回到命中的原文与页码</small></span></div></div>
+  <div class="privacy"><span class="dot"></span> 文档留在本机<p>无需账号 · 正常使用无需联网</p></div>
+</aside>
+<main>
+  <header class="page-header"><div><div class="eyebrow">LOCAL DOCUMENT WORKSPACE</div><h1>本地文档检索台</h1><p>记得一句话，就能找到那份资料。</p></div><span class="local-badge"><span class="dot"></span> 仅本机运行</span></header>
+  <section class="directory card" aria-labelledby="directory-title">
+    <div class="section-title"><h2 id="directory-title">资料目录</h2><span class="format-note">Markdown / TXT / DOCX / 文本层 PDF</span></div>
+    <div class="directory-row"><label class="sr-only" for="folder">资料目录路径</label><input id="folder" placeholder="选择资料目录，或粘贴完整路径" autocomplete="off" spellcheck="false"><button id="browse" class="button secondary">选择目录…</button><button id="use-folder" class="button subtle">使用此目录</button></div>
+    <div class="directory-footer"><div class="history-row"><label for="history">最近目录</label><select id="history"><option value="">尚未选择目录</option></select></div><div class="index-actions"><span id="updated">尚未建立索引</span><button id="cancel" class="button secondary hidden">取消更新</button><button id="update" class="button primary">建立 / 更新索引</button></div></div>
+    <div id="job-box" class="job-box hidden" role="status"><span class="spinner"></span><div><strong id="job-title">正在更新索引</strong><p id="job-detail"></p></div></div>
+  </section>
+  <section class="stats" aria-label="索引概览"><article class="card"><span>已发现文档</span><strong id="doc-count">—</strong><small>当前目录及其子目录</small></article><article class="card accent-card"><span>可检索正文</span><strong id="text-count">—</strong><small>提取结果保存在本机</small></article><article class="card"><span>需要留意</span><strong id="issue-count">—</strong><small>查看下方的读取与提取提示</small></article></section>
+  <section class="search-area" aria-labelledby="search-title"><h2 id="search-title">找回你记得的那句话</h2>
+    <form id="search-form" class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><label class="sr-only" for="query">搜索文件名或正文</label><input id="query" maxlength="200" placeholder="搜索文件名或正文，例如：项目 预算" autocomplete="off"><button class="button primary" id="search-button" type="submit">搜索文档 <span aria-hidden="true">→</span></button></form>
+    <div class="search-meta"><p>多个词以空格分隔，<b>全部匹配</b>；英文不区分大小写。词可分布在文件名与正文的不同段落或页。</p><span>字面子串搜索 · 不使用正则</span></div>
+    <div class="filter-bar"><div id="filters" class="filters" role="group" aria-label="文档类型筛选"><button class="filter active" data-kind="all" aria-pressed="true">全部文档</button><button class="filter" data-kind="md" aria-pressed="false">Markdown</button><button class="filter" data-kind="txt" aria-pressed="false">TXT</button><button class="filter" data-kind="docx" aria-pressed="false">DOCX</button><button class="filter" data-kind="pdf" aria-pressed="false">PDF</button></div><span id="result-count" aria-live="polite">等待搜索</span></div>
+  </section>
+  <div id="notice" class="notice hidden" role="alert"></div>
+  <section id="results" aria-label="搜索结果" aria-live="polite"></section>
+  <div id="empty" class="empty card"><div class="empty-icon" aria-hidden="true">⌕</div><h3 id="empty-title">先为资料建立一份索引</h3><p id="empty-text">选择目录并点击「建立 / 更新索引」，再输入记得的关键词。</p><div class="empty-tags"><span>.md</span><span>.txt</span><span>.docx</span><span>.pdf</span></div></div>
+  <nav id="pagination" class="pagination hidden" aria-label="搜索结果翻页"><button id="previous" class="button secondary">上一页</button><span id="page-label"></span><button id="next" class="button secondary">下一页</button></nav>
+  <details id="issues-panel" class="issues-panel card hidden"><summary id="issues-title">读取与提取提示</summary><p class="issues-explain">扫描页、空白页、加密 PDF 或读取失败的文件不会伪造正文。可读取的文档继续建立索引。</p><ul id="issues"></ul></details>
+  <footer>Local Doc Finder <span>先找到原文，再继续思考。</span></footer>
+</main>
+</body></html>
