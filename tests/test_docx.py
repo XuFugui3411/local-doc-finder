@@ -38,7 +38,7 @@ class DocxTests(unittest.TestCase):
 
     def test_docx_search_and_positions_and_filter(self):
         docx(self.path, body=BODY)
-        (self.docs / 'other.txt').write_text('alpha 预算')
+        (self.docs / 'other.txt').write_text('alpha 预算', encoding='utf-8')
         self.index.update(self.root_id)
         hit = self.index.search('ALPHA 预算', kind='docx')['results'][0]
         self.assertEqual(hit['kind'], 'docx')
