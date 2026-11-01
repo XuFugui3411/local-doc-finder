@@ -102,9 +102,12 @@ PDF 原文跳页依赖浏览器自带 PDF 查看器；若浏览器设置为下�
 
 ```powershell
 .venv\Scripts\python -m unittest discover -s tests -v
+node --test tests/test_frontend.cjs
 ```
 
 测试使用临时目录，覆盖递归扫描、中文与空格路径、编码、多词 AND、英文大小写、字面特殊字符、PDF 物理页码及跨页匹配、扫描页、加密和损坏 PDF、真实 Windows 文件占用、目录联接跳过、权限失败、同大小同时间戳的内容变化、索引增删更新、事务回滚、重启持久性、原文范围检查和 HTTP 会话 / 跨站保护。
+
+前端回归测试使用 Node.js 22 或以上的内置测试工具，无需安装 npm 依赖；验证快速索引更新、连续更新、重复轮询、取消 / 失败及旧搜索响应的处理。Node.js 仅用于开发测试，软件运行不需要它。
 
 演示文件可用 `.venv\Scripts\python tools/create_demo.py` 创建到 `output/demo-documents`。它们只是测试内容，不是真实用户资料。浏览器验收截图保存在 `docs/images/`；验收记录见 [VALIDATION.md](VALIDATION.md)。
 

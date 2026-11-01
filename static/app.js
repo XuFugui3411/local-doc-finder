@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const token = document.querySelector('meta[name="local-token"]').content;
-const state = {root:null, kind:'all', offset:0, total:0, limit:20, sequence:0, lastJob:'idle', busy:false, picking:false, timer:null};
+const state = {root:null, kind:'all', offset:0, total:0, limit:20, sequence:0, busy:false, picking:false, timer:null};
 async function api(path, body, signal) {
   const response = await fetch(path, {method:body===undefined?'GET':'POST', headers:{'X-Local-Token':token,...(body===undefined?{}:{'Content-Type':'application/json'})}, body:body===undefined?undefined:JSON.stringify(body), signal});
   const data = await response.json();
@@ -57,6 +57,8 @@ async function search(reset=true) {
 }
 function renderStatus(data) {
   const changed=state.root?.id!==data.root?.id;
+  // A fast update may finish between polls; observe the committed index version.
+  const indexChanged=!changed&&state.root?.updated!==data.root?.updated;
   state.root=data.root;state.busy=data.job.state==='running';
   if(changed){clearResults();$('folder').value=data.root?.path||'';empty(data.documents?'索引已经准备好':'先为资料建立一份索引',data.documents?'输入关键词，搜索文件名和正文中的原话。':'选择目录并点击「建立 / 更新索引」，再输入记得的关键词。');}
   if(!data.root&&!$('folder').value)$('folder').value='';
@@ -74,9 +76,8 @@ function renderStatus(data) {
   $('issues-panel').classList.toggle('hidden',!data.issues?.length);
   $('issues-title').textContent=`读取与提取提示 · ${data.issue_count||0} 项${data.issue_count>500?'（显示前 500 项）':''}`;
   $('issues').replaceChildren();for(const issue of data.issues||[]){const li=node('li');li.append(node('b','',issue.relative),document.createTextNode(issue.message));$('issues').append(li);}
-  if(state.lastJob==='running'&&job.state==='done'&&$('query').value.trim())search();
+  if(indexChanged&&data.root?.updated&&$('query').value.trim())search();
   if(!$('query').value.trim()&&data.root?.updated&&!state.busy)empty(data.documents?'索引已经准备好':'目录中没有支持的文档',data.documents?'输入记得的关键词，查找文件名和正文；读取或提取提示见下方。':'支持 .md、.markdown、.txt、.docx 和有文本层的 .pdf；请检查目录或查看下方提示。');
-  state.lastJob=job.state;
 }
 async function refresh(){clearTimeout(state.timer);try{renderStatus(await api('/api/status'));}catch(error){notice('无法连接本地服务：'+error.message);}state.timer=setTimeout(refresh,state.busy?850:3500);}
 async function choose(path){const data=await api('/api/root',{path});renderStatus(data);$('folder').value=data.root.path;notice();}
