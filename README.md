@@ -8,7 +8,7 @@
 
 ### Windows 桌面软件
 
-前往 [最新版本下载页](https://github.com/XuFugui3411/local-doc-finder/releases/latest)，下载 **LocalDocFinder-1.1.0-windows-x64.zip**。这是包含 Python、pypdf 和网页资源的 Windows 64 位软件包，无需另行安装 Python 或 Word。
+前往 [最新版本下载页](https://github.com/XuFugui3411/local-doc-finder/releases/latest)，下载 **LocalDocFinder-1.1.1-windows-x64.zip**。这是包含 Python、pypdf 和网页资源的 Windows 64 位软件包，无需另行安装 Python 或 Word。
 
 1. 将 ZIP 完整解压到桌面或其他目录。
 2. 打开解压后的 `LocalDocFinder` 文件夹，双击 **LocalDocFinder.exe**，软件会显示运行管理窗口并自动打开本地网页。
